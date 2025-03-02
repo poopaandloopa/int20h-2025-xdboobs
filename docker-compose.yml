@@ -14,7 +14,7 @@ services:
     build: ./mlflow
     networks: ['network']
     volumes:
-      - mlflow_data:/mlflow
+      - mlflow_data:/mlflow/artifacts
     env_file:
       - .env
     ports:
@@ -26,15 +26,15 @@ services:
     restart: unless-stopped
 
   # pipeline orchestration server
-#  prefect-server:
-#    image: prefecthq/prefect:3-latest
-#    networks: ['network']
-#    volumes:
-#      - prefect_data:/root/.prefect
-#    ports:
-#      - 4200:4200
-#    command: ["prefect", "server", "start", "--host", "0.0.0.0"]
-#    restart: unless-stopped
+  prefect-server:
+    image: prefecthq/prefect:3-latest
+    networks: ['network']
+    volumes:
+      - prefect_data:/root/.prefect
+    ports:
+      - 4200:4200
+    command: ["prefect", "server", "start", "--host", "0.0.0.0"]
+    restart: unless-stopped
 
   # worker that executes pipelines
 #  prefect-worker-1:
@@ -47,14 +47,16 @@ services:
 #    restart: unless-stopped
 
   # register pipeline in prefect
-#  pipelines:
-#    build: ./pipelines
-#    networks: ['network']
-#    env_file:
-#      - .env
-#    depends_on:
-#      - prefect-server
-#      - mlflow-server
+  pipelines:
+    build: ./pipelines
+    networks: ['network']
+    volumes:
+      - ./pipelines/data:/app/data
+    env_file:
+      - .env
+    depends_on:
+      - prefect-server
+      - mlflow-server
 
 #  inference-api:
 #    build: ./inference_api
