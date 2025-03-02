@@ -294,6 +294,8 @@ def train_model(data: pd.DataFrame, target: pd.Series, best_params: dict):
 
         train_r2 = r2_score(target, final_model.predict(data))
         mlflow.log_metric("R2", train_r2)
+        for key, value in best_params.items():
+            mlflow.log_param(key, value)
         mlflow.xgboost.log_model(final_model, "xgboost_model")
 
 

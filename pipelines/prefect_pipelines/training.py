@@ -28,7 +28,7 @@ def data_processing_pipeline(data_folder: str) -> pd.DataFrame:
     print("Create new features")
     df = create_features(df)
     print("Saving to S3")
-    save_dataframe_to_s3(df, os.getenv("BUCKET_NAME"), "data/processed_data.parquet")
+    save_dataframe_to_s3(df, os.getenv("BUCKET_NAME"), "data/processed_data.parquet", save_type="parquet")
 
     return df
 
